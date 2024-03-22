@@ -1,9 +1,12 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import layout from "./views/layouts/layout.vue";
+import home from "./views/HomeView.vue";
 </script>
 
 <template>
-  <RouterView />
+  <layout>
+    <home />
+  </layout>
 </template>
 
 <style scoped>
