@@ -301,9 +301,8 @@ const Question = ref({
 // const fireFunction = () => {
 //   form.questions.push(Question.value); // Push the question to the Form's questions array
 // };
-const { form, numOfQuestion } = defineProps({
+const { form } = defineProps({
   form: Object,
-  numOfQuestion: Number,
 });
 
 const exportQuestion = () => {
