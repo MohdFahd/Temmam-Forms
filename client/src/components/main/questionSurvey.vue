@@ -78,7 +78,11 @@
             </svg>
           </button>
         </el-col>
-        <el-col :span="24" v-show="addOthers" class="flex items-center">
+        <el-col
+          :span="24"
+          v-show="Question.addOthers"
+          class="flex items-center"
+        >
           <div class="grid-content ep-bg-purple-dark my-5 mr-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -95,10 +99,9 @@
             type="text"
             class="w-full text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
             placeholder="Others..."
-            v-model="description"
           />
           <br />
-          <button @click="addOthers = false">
+          <button @click="Question.addOthers = false">
             <svg
               class="me-5"
               xmlns="http://www.w3.org/2000/svg"
@@ -129,13 +132,12 @@
             type="text"
             class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
             placeholder="Add another"
-            v-model="description"
           />
 
-          <h1 v-show="!addOthers" class="mt-5">
+          <h1 v-show="!Question.addOthers" class="mt-5">
             or
             <span
-              @click="addOthers = true"
+              @click="Question.addOthers = true"
               class="text-primary text-sm font-bold cursor-pointer"
               >Add Others</span
             >
@@ -196,7 +198,11 @@
             </svg>
           </button>
         </el-col>
-        <el-col :span="24" v-show="addOthers" class="flex items-center">
+        <el-col
+          :span="24"
+          v-show="Question.addOthers"
+          class="flex items-center"
+        >
           <div class="grid-content ep-bg-purple-dark my-5 mr-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +219,6 @@
             type="text"
             class="w-full text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
             placeholder="Others..."
-            v-model="description"
           />
           <br />
         </el-col>
@@ -235,13 +240,12 @@
             type="text"
             class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
             placeholder="Add another"
-            v-model="description"
           />
 
-          <h1 v-show="!addOthers || focus" class="mt-5">
+          <h1 v-show="!Question.addOthers" class="mt-5">
             or
             <span
-              @click="addOthers = true"
+              @click="Question.addOthers = true"
               class="text-primary text-sm font-bold cursor-pointer"
               >Add Others</span
             >
@@ -293,7 +297,9 @@ const Question = ref({
   require: false,
   options: ["Option"],
   type: "Multiple choice",
+  addOthers: false,
 });
+
 // const fireFunction = () => {
 //   form.questions.push(Question.value); // Push the question to the Form's questions array
 // };
