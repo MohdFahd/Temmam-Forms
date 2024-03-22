@@ -127,14 +127,13 @@
               />
             </svg>
           </div>
-          <input
+          <span
             @click="numOfOption++"
-            type="text"
-            class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
-            placeholder="Add another"
-          />
+            class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 focus:border-primary mx-2"
+            >Add Others
+          </span>
 
-          <h1 v-show="!Question.addOthers" class="mt-5">
+          <h1 v-show="!Question.addOthers">
             or
             <span
               @click="Question.addOthers = true"
@@ -235,12 +234,11 @@
               />
             </svg>
           </div>
-          <input
+          <span
             @click="numOfOption++"
-            type="text"
-            class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
-            placeholder="Add another"
-          />
+            class="w-25 text-primary border-b-2 focus:outline-none focus:border-b-2 focus:border-primary mx-2"
+            >Add Others
+          </span>
 
           <h1 v-show="!Question.addOthers" class="mt-5">
             or
