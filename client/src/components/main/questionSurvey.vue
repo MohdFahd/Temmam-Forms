@@ -181,7 +181,7 @@
           <input
             type="text"
             class="w-full text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
-            value="Option 1 "
+            v-model="Question.options[i - 1]"
             placeholder="Enter your Description..."
           />
           <button @click="numOfOption--">
@@ -240,7 +240,7 @@
             >Add Others
           </span>
 
-          <h1 v-show="!Question.addOthers" class="mt-5">
+          <h1 v-show="!Question.addOthers">
             or
             <span
               @click="Question.addOthers = true"
