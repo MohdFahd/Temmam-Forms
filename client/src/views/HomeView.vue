@@ -31,7 +31,7 @@
 
       <div class="">
         <img
-          src="https://i.pravatar.cc/40?img=3"
+          src="https://i.pravatar.cc/40?img=21"
           class="rounded-full me-5"
           alt=""
         />
