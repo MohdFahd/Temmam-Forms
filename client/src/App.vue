@@ -1,12 +1,13 @@
 <script setup>
 import layout from "./views/layouts/layout.vue";
 import home from "./views/HomeView.vue";
+import login from "./views/auth/login.vue";
 </script>
 
 <template>
-  <layout>
-    <home />
-  </layout>
+  <div class="p-10">
+    <login />
+  </div>
 </template>
 
 <style scoped>
