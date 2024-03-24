@@ -1,9 +1,12 @@
 const express = require("express");
 const admin = require("./routes/adminRoute");
 const cors = require("cors");
+const dotenv = require("dotenv");
 
 // express app
 const app = express();
+dotenv.config({ path: "./.env" });
+
 // Enable CORS
 app.use(cors());
 // listen for requests

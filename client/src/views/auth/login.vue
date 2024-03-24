@@ -142,12 +142,13 @@
     </div>
   </section>
 </template>
-
 <script setup>
 import axios from "axios";
 import { ref } from "vue";
+import { useRouter } from "vue-router"; // Import useRouter function
 const email = ref("");
 const password = ref("");
+const router = useRouter(); // Use useRouter to access the router instance
 const submit = () => {
   // Make a login request
   axios
@@ -155,18 +156,16 @@ const submit = () => {
       email: email.value,
       password: password.value,
     })
-    .then((response) => {
-      console.log(email.value);
-      // console.log(response);
-      // if (data.login) {
-      //   console.log(data);
-      //   // Redirect to /admin/ on successful login
-      //   localStorage.setItem("token", data.token);
-      //   localStorage.setItem("username", data.data[0].user_name);
-      //   localStorage.setItem("name", data.data[0].name);
-      //   console.log("name", data.data[0].name);
-      //   this.$router.push({ name: "home" });
-      // }
+    .then(({ data }) => {
+      if (data.login) {
+        console.log(data);
+        // Redirect to /admin/ on successful login
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.data[0].user_name);
+        localStorage.setItem("name", data.data[0].name);
+        console.log("name", data.data[0].name);
+        router.push({ name: "home" }); // Use router.push instead of this.$router.push
+      }
     })
     .catch((error) => {
       console.log("error", error);

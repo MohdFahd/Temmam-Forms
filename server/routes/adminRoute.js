@@ -1,15 +1,19 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../Database/db.js");
+const jwt = require("jsonwebtoken");
+
 router.use(express.json());
 
 router.post("/login", (req, res) => {
-  res.send("Hello World");
   const { email, password } = req.body;
   console.log(email, password);
   if (email && password) {
+    console.log(process.env.JWT_SECRET);
+
     // Query the database for the provided username and password
     db.query(
-      "SELECT * FROM user WHERE email = ? AND password = ?",
+      "SELECT * FROM users WHERE email = ? AND password = ?",
       [email, password],
       (err, data) => {
         if (err) {
