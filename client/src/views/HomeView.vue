@@ -15,7 +15,7 @@
             />
           </svg>
         </el-button>
-        <el-button color="#0F113C">
+        <el-button color="#0F113C" @click="onSave">
           <span class="mx-2">Save</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -54,12 +54,31 @@ import headerFrom from "@/components/main/headerFrom.vue";
 import layout from "./layouts/layout.vue";
 import questionSurvey from "@/components/main/questionSurvey.vue";
 import { ref, watch } from "vue";
-
+import axios from "axios";
 const numOfQuestion = ref(1);
+import Swal from "sweetalert2";
 
 const Form = ref({
   title: "Untitled form",
   description: "",
   questions: [],
 });
+
+const onSave = () => {
+  console.log(Form.value);
+  axios
+    .post("http://localhost:3000/admin/form/store", {
+      form: Form.value,
+    })
+    .then(() => {
+      Swal.fire({
+        title: "Good job!",
+        text: "Form added successfully!",
+        icon: "success",
+      });
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+};
 </script>

@@ -1,5 +1,6 @@
 const express = require("express");
 const admin = require("./routes/adminRoute");
+const user = require("./routes/userRoute");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 
 // Define admin route
 app.use("/admin", admin);
+app.use("/user", user);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

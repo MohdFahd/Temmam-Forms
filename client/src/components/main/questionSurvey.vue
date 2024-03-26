@@ -286,7 +286,7 @@ const options = [
   },
 ];
 
-const addOthers = ref(false);
+// const addOthers = ref(false);
 const numOfOption = ref(1);
 
 const focus = ref(false);
