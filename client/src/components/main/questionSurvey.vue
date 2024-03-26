@@ -6,7 +6,7 @@
     class="px-4 rounded-lg dark:border-gray-700 mt-5"
     :class="{ 'border-l-4 border-l-secondary': focus }"
   >
-    <el-row>
+    <el-row class="w-full">
       <el-col :span="16"
         ><div class="grid-content ep-bg-purple" />
         <input
