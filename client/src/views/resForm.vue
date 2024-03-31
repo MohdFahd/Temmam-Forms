@@ -29,10 +29,17 @@
           <el-col
             :span="24"
             class="flex items-center"
-            v-for="(i, index) in question.options"
+            v-for="(option, index) in question.options"
             :key="index"
           >
-            <el-radio v-model="answers.radio" size="large">{{ i }}</el-radio>
+            <el-radio
+              v-model="question.Answer"
+              :label="option"
+              size="large"
+              @change="updateAnswer(question, option)"
+            >
+              {{ option }}
+            </el-radio>
           </el-col>
           <input
             v-if="question.addOthers == 1"
@@ -41,18 +48,25 @@
             placeholder="Enter your Question..."
           />
         </el-row>
-        <el-row v-if="question.type == 'CheckBoxes'">
+        <el-row v-if="question.type === 'CheckBoxes'">
           <h1 class="font-bold text-xl">{{ question.questionName }} ?</h1>
           <el-col
             :span="24"
             class="flex items-center"
-            v-for="(i, index) in question.options"
+            v-for="(option, index) in question.options"
             :key="index"
           >
-            <el-checkbox v-model="checked1" :label="i" size="large" />
+            <el-checkbox
+              v-model="question.Answer"
+              :label="option"
+              size="large"
+              @change="updateAnswer(question, index)"
+            >
+              {{ option }}
+            </el-checkbox>
           </el-col>
           <input
-            v-if="question.addOthers == 1"
+            v-if="question.addOthers === 1"
             type="text"
             class="w-full text-lg text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
             placeholder="Others.."
@@ -64,6 +78,7 @@
             <input
               type="text"
               class="w-full text-lg text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
+              v-model="question.Answer"
               placeholder="Enter your Question..."
             />
           </el-col>
@@ -93,6 +108,13 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 export default {
+  methods: {
+    updateAnswer(question, option) {
+      if (!question.Answer) {
+        question.Answer = []; // Initialize the answer array if it's not already initialized
+      }
+    },
+  },
   setup() {
     const $route = useRoute();
     const id = $route.params.id;
@@ -108,6 +130,12 @@ export default {
         .then((response) => {
           // Update formData with the retrieved data
           formData.value = response.data.data;
+
+          // Iterate over each question in the formData
+          formData.value.questions.forEach((question) => {
+            // Add an "Answer" property with a default empty string
+            question.Answer = [];
+          });
         })
         .catch((error) => {
           console.error("Error:", error);
