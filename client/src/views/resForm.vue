@@ -86,7 +86,7 @@
       </div>
       <hr class="border-b border-gray-300 bg-black my-5" />
       <el-button class="p-4" color="#0F113C">
-        <span class="mx-2">Send</span>
+        <span class="mx-2" @click="onSend">Send</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="15px"
@@ -106,6 +106,7 @@
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   methods: {
@@ -122,6 +123,30 @@ export default {
     const answers = ref({
       radio: "",
     });
+
+    const onSend = () => {
+      axios
+        .post("http://localhost:3000/admin/form/responseSubmission", {
+          form: formData.value,
+        })
+        .then((response) => {
+          // Handle the response from the server
+          Swal.fire({
+            title: "Good job!",
+            text: response.data.message, // Access the message from the response
+            icon: "success",
+          });
+          // Optionally, you can perform additional actions with the response data
+          console.log("Response data:", response.data);
+
+          // Redirect the user to the home page
+          router.push("/");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          // Handle error
+        });
+    };
 
     // Use onMounted to fetch data when the component is mounted
     onMounted(() => {
@@ -143,18 +168,9 @@ export default {
         });
     });
 
-    return {
-      formData,
-      answers,
-    };
+    return { onSend, formData, answers };
   },
 };
 </script>
-
-<!-- <script setup>
-const answers = ref({
-  radio: "",
-});
-</script> -->
 
 <style></style>

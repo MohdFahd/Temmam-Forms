@@ -57,7 +57,7 @@ router.get("/form/response/:id", (req, res) => {
   // Select form, questions, and options data based on the form ID
   db.query(
     "SELECT f.title AS form_title, f.description AS form_description, " +
-      "q.name AS question_name, q.require AS question_require, " +
+      "q.name AS question_name, q.id AS qest_id, q.require AS question_require, " +
       "q.type AS question_type, q.addOthers AS question_addOthers, " +
       "GROUP_CONCAT(o.option_text) AS option_texts " +
       "FROM forms f " +
@@ -96,6 +96,7 @@ router.get("/form/response/:id", (req, res) => {
           type: row.question_type,
           addOthers: row.question_addOthers,
           options: [],
+          qes_id: row.qest_id, // Corrected to match the alias in the query
         };
 
         // Add options to the question if available

@@ -117,65 +117,51 @@ router.post("/form/store", (req, res) => {
     }
   );
 });
-router.get("/form/response/:id", (req, res) => {
-  const id = req.params.id;
+router.post("/form/responseSubmission", (req, res) => {
+  const formData = req.body.form;
+  const data = formData.questions;
 
-  // Select form, questions, and options data based on the form ID
-  db.query(
-    "SELECT f.title AS form_title, f.description AS form_description, " +
-      "q.name AS question_name, q.require AS question_require, " +
-      "q.type AS question_type, q.addOthers AS question_addOthers, " +
-      "GROUP_CONCAT(o.option_text) AS option_texts " +
-      "FROM forms f " +
-      "JOIN questions q ON f.id = q.form_id " +
-      "LEFT JOIN options o ON q.id = o.question_id " +
-      "WHERE f.id = ? " +
-      "GROUP BY q.id",
-    [id],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res
-          .status(500)
-          .json({ success: false, message: "Internal server error" });
-      }
+  // Iterate over each question in the formData
+  data.forEach((element) => {
+    const { qes_id, Answer } = element;
 
-      // Check if any data is returned
-      if (result.length === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Form data not found" });
-      }
-
-      // Initialize the form object
-      const formData = {
-        title: result[0].form_title,
-        description: result[0].form_description,
-        questions: [],
-      };
-
-      // Iterate over the result to organize questions and options
-      result.forEach((row) => {
-        const question = {
-          questionName: row.question_name,
-          require: row.question_require,
-          type: row.question_type,
-          addOthers: row.question_addOthers,
-          options: [],
-        };
-
-        // Add options to the question if available
-        if (row.option_texts) {
-          question.options = row.option_texts.split(",");
-        }
-
-        // Push the question to the formData
-        formData.questions.push(question);
+    // If Answer is an array, insert each answer individually
+    if (Array.isArray(Answer)) {
+      Answer.forEach((answer) => {
+        // Insert the answer into the response table
+        db.query(
+          "INSERT INTO response (qes_id, answer) VALUES (?, ?)",
+          [qes_id, answer],
+          (err, result) => {
+            if (err) {
+              console.error(err);
+              return res
+                .status(500)
+                .json({ success: false, message: "Internal server error" });
+            }
+            console.log(`Inserted answer for question ${qes_id}: ${answer}`);
+          }
+        );
       });
-
-      res.json({ success: true, data: formData });
+    } else {
+      // If Answer is not an array, insert it as a single value
+      db.query(
+        "INSERT INTO response (qes_id, answer) VALUES (?, ?)",
+        [qes_id, Answer],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            return res
+              .status(500)
+              .json({ success: false, message: "Internal server error" });
+          }
+          console.log(`Inserted answer for question ${qes_id}: ${Answer}`);
+        }
+      );
     }
-  );
+  });
+
+  res.json({ success: true, message: "Response submitted successfully" });
 });
 
 module.exports = router;
