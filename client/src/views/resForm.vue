@@ -85,8 +85,8 @@
         </el-row>
       </div>
       <hr class="border-b border-gray-300 bg-black my-5" />
-      <el-button class="p-4" color="#0F113C">
-        <span class="mx-2" @click="onSend">Send</span>
+      <el-button class="p-4" @click="onSend" color="#0F113C">
+        <span class="mx-2">Send</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="15px"
@@ -125,6 +125,7 @@ export default {
     });
 
     const onSend = () => {
+      console.log(formData.value);
       axios
         .post("http://localhost:3000/admin/form/responseSubmission", {
           form: formData.value,

@@ -119,19 +119,53 @@ router.post("/form/store", (req, res) => {
 });
 router.post("/form/responseSubmission", (req, res) => {
   const formData = req.body.form;
+  const { from_id } = formData;
   const data = formData.questions;
+  console.log(from_id);
 
-  // Iterate over each question in the formData
-  data.forEach((element) => {
-    const { qes_id, Answer } = element;
+  // Check if the from_id exists in the forms table
+  db.query("SELECT id FROM forms WHERE id = ?", [from_id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
 
-    // If Answer is an array, insert each answer individually
-    if (Array.isArray(Answer)) {
-      Answer.forEach((answer) => {
-        // Insert the answer into the response table
+    // If from_id does not exist, return an error response
+    if (result.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid from_id" });
+    }
+
+    // Iterate over each question in the formData
+    data.forEach((element) => {
+      const { qes_id, Answer } = element;
+
+      // If Answer is an array, insert each answer individually
+      if (Array.isArray(Answer)) {
+        Answer.forEach((answer) => {
+          // Insert the answer into the response table
+          db.query(
+            "INSERT INTO response (qes_id, answer, from_id) VALUES (?, ?, ?)",
+            [qes_id, answer, from_id],
+            (err, result) => {
+              if (err) {
+                console.error(err);
+                return res
+                  .status(500)
+                  .json({ success: false, message: "Internal server error" });
+              }
+              console.log(`Inserted answer for question ${qes_id}: ${answer}`);
+            }
+          );
+        });
+      } else {
+        // If Answer is not an array, insert it as a single value
         db.query(
-          "INSERT INTO response (qes_id, answer) VALUES (?, ?)",
-          [qes_id, answer],
+          "INSERT INTO response (qes_id, answer, from_id) VALUES (?, ?, ?)",
+          [qes_id, Answer, from_id],
           (err, result) => {
             if (err) {
               console.error(err);
@@ -139,29 +173,77 @@ router.post("/form/responseSubmission", (req, res) => {
                 .status(500)
                 .json({ success: false, message: "Internal server error" });
             }
-            console.log(`Inserted answer for question ${qes_id}: ${answer}`);
+            console.log(`Inserted answer for question ${qes_id}: ${Answer}`);
           }
         );
-      });
-    } else {
-      // If Answer is not an array, insert it as a single value
-      db.query(
-        "INSERT INTO response (qes_id, answer) VALUES (?, ?)",
-        [qes_id, Answer],
-        (err, result) => {
-          if (err) {
-            console.error(err);
-            return res
-              .status(500)
-              .json({ success: false, message: "Internal server error" });
-          }
-          console.log(`Inserted answer for question ${qes_id}: ${Answer}`);
-        }
-      );
-    }
-  });
+      }
+    });
 
-  res.json({ success: true, message: "Response submitted successfully" });
+    // Send success response after all responses are inserted
+    res.json({ success: true, message: "Response submitted successfully" });
+  });
+});
+
+router.get("/getResponse/:id", (req, res) => {
+  const id = req.params.id;
+
+  // Select form, questions, and options data based on the form ID
+  db.query(
+    "SELECT f.title AS form_title, f.description AS form_description, " +
+      "q.name AS question_name, q.id AS qest_id, q.require AS question_require, " +
+      "q.type AS question_type, q.addOthers AS question_addOthers, " +
+      "GROUP_CONCAT(o.option_text) AS option_texts " +
+      "FROM forms f " +
+      "JOIN questions q ON f.id = q.form_id " +
+      "LEFT JOIN options o ON q.id = o.question_id " +
+      "WHERE f.id = ? " +
+      "GROUP BY q.id",
+    [id],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res
+          .status(500)
+          .json({ success: false, message: "Internal server error" });
+      }
+
+      // Check if any data is returned
+      if (result.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Form data not found" });
+      }
+
+      // Initialize the form object
+      const formData = {
+        title: result[0].form_title,
+        description: result[0].form_description,
+        questions: [],
+      };
+
+      // Iterate over the result to organize questions and options
+      result.forEach((row) => {
+        const question = {
+          questionName: row.question_name,
+          require: row.question_require,
+          type: row.question_type,
+          addOthers: row.question_addOthers,
+          options: [],
+          qes_id: row.qest_id, // Corrected to match the alias in the query
+        };
+
+        // Add options to the question if available
+        if (row.option_texts) {
+          question.options = row.option_texts.split(",");
+        }
+
+        // Push the question to the formData
+        formData.questions.push(question);
+      });
+
+      res.json({ success: true, data: formData });
+    }
+  );
 });
 
 module.exports = router;
