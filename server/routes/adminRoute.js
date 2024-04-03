@@ -121,6 +121,7 @@ router.post("/form/responseSubmission", (req, res) => {
   const formData = req.body.form;
   const { from_id } = formData;
   const data = formData.questions;
+  const user_id = 2;
   console.log(from_id);
 
   // Check if the from_id exists in the forms table
@@ -148,8 +149,8 @@ router.post("/form/responseSubmission", (req, res) => {
         Answer.forEach((answer) => {
           // Insert the answer into the response table
           db.query(
-            "INSERT INTO response (qes_id, answer, from_id) VALUES (?, ?, ?)",
-            [qes_id, answer, from_id],
+            "INSERT INTO response (user_id,qes_id, answer, from_id) VALUES (?,?, ?, ?)",
+            [user_id, qes_id, answer, from_id],
             (err, result) => {
               if (err) {
                 console.error(err);
@@ -164,8 +165,8 @@ router.post("/form/responseSubmission", (req, res) => {
       } else {
         // If Answer is not an array, insert it as a single value
         db.query(
-          "INSERT INTO response (qes_id, answer, from_id) VALUES (?, ?, ?)",
-          [qes_id, Answer, from_id],
+          "INSERT INTO response (user_id,qes_id, answer, from_id) VALUES (?,?, ?, ?)",
+          [user_id, qes_id, Answer, from_id],
           (err, result) => {
             if (err) {
               console.error(err);
@@ -186,18 +187,12 @@ router.post("/form/responseSubmission", (req, res) => {
 
 router.get("/getResponse/:id", (req, res) => {
   const id = req.params.id;
+  // Declare the response object to hold user information and questions grouped by user_id
+  const responseData = {};
 
   // Select form, questions, and options data based on the form ID
   db.query(
-    "SELECT f.title AS form_title, f.description AS form_description, " +
-      "q.name AS question_name, q.id AS qest_id, q.require AS question_require, " +
-      "q.type AS question_type, q.addOthers AS question_addOthers, " +
-      "GROUP_CONCAT(o.option_text) AS option_texts " +
-      "FROM forms f " +
-      "JOIN questions q ON f.id = q.form_id " +
-      "LEFT JOIN options o ON q.id = o.question_id " +
-      "WHERE f.id = ? " +
-      "GROUP BY q.id",
+    "SELECT u.id as user_id, u.name AS user_name, q.id as qes_id, q.name AS qes_name, GROUP_CONCAT(r.answer) AS answers FROM response r INNER JOIN users u ON r.user_id = u.id INNER JOIN questions q ON r.qes_id = q.id WHERE r.from_id = ? GROUP BY u.id, q.id",
     [id],
     (err, result) => {
       if (err) {
@@ -214,34 +209,28 @@ router.get("/getResponse/:id", (req, res) => {
           .json({ success: false, message: "Form data not found" });
       }
 
-      // Initialize the form object
-      const formData = {
-        title: result[0].form_title,
-        description: result[0].form_description,
-        questions: [],
-      };
-
-      // Iterate over the result to organize questions and options
+      // Iterate over the result to organize user information and questions
       result.forEach((row) => {
-        const question = {
-          questionName: row.question_name,
-          require: row.question_require,
-          type: row.question_type,
-          addOthers: row.question_addOthers,
-          options: [],
-          qes_id: row.qest_id, // Corrected to match the alias in the query
-        };
-
-        // Add options to the question if available
-        if (row.option_texts) {
-          question.options = row.option_texts.split(",");
+        const user_id = row.user_id;
+        // Check if the user_id exists in the responseData object
+        if (!responseData.hasOwnProperty(user_id)) {
+          // If not exists, create a new object for the user
+          responseData[user_id] = {
+            user_id: user_id,
+            user_name: row.user_name,
+            questions: [],
+          };
         }
-
-        // Push the question to the formData
-        formData.questions.push(question);
+        const question = {
+          id: row.qes_id,
+          questionName: row.qes_name,
+          answers: row.answers.split(","), // Convert the concatenated string of answers back to an array
+        };
+        // Push the question to the questions array of the user
+        responseData[user_id].questions.push(question);
       });
 
-      res.json({ success: true, data: formData });
+      res.json({ success: true, data: responseData }); // Return the responseData object containing user information and questions
     }
   );
 });
