@@ -234,5 +234,17 @@ router.get("/getResponse/:id", (req, res) => {
     }
   );
 });
+router.get("/getForms", (req, res) => {
+  db.query("SELECT * FROM forms ORDER BY created_at DESC;", (err, result) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+    // Send the forms as JSON
+    res.json({ success: true, forms: result });
+  });
+});
 
 module.exports = router;

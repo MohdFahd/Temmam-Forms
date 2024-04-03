@@ -2,32 +2,22 @@
   <layout>
     <div class="p-4 sm:ml-64">
       <nav class="my-5 flex justify-end items-end">
-        <el-button color="#0F113C" @click="numOfQuestion++">
-          <span class="mx-2">Add</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15px"
-            viewBox="0 0 448 512"
-          >
-            <path
-              fill="#bbd115"
-              d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
-            />
-          </svg>
-        </el-button>
-        <el-button color="#0F113C" @click="onSave">
-          <span class="mx-2">Save</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15px"
-            viewBox="0 0 448 512"
-          >
-            <path
-              fill="#50db14"
-              d="M48 96V416c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V170.5c0-4.2-1.7-8.3-4.7-11.3l33.9-33.9c12 12 18.7 28.3 18.7 45.3V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96C0 60.7 28.7 32 64 32H309.5c17 0 33.3 6.7 45.3 18.7l74.5 74.5-33.9 33.9L320.8 84.7c-.3-.3-.5-.5-.8-.8V184c0 13.3-10.7 24-24 24H104c-13.3 0-24-10.7-24-24V80H64c-8.8 0-16 7.2-16 16zm80-16v80H272V80H128zm32 240a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z"
-            />
-          </svg>
-        </el-button>
+        <router-link to="/form">
+          <el-button color="#0F113C">
+            <span class="mx-2">New Form</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15px"
+              viewBox="0 0 448 512"
+            >
+              <path
+                fill="#bbd115"
+                d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
+              />
+            </svg>
+          </el-button>
+        </router-link>
+
         <div class="border-l border-gray-300 h-10 mx-4"></div>
 
         <div class="">
@@ -39,12 +29,60 @@
         </div>
       </nav>
       <div
-        class="p-4 border-l-8 border-l-primary rounded-lg dark:border-gray-700"
+        class="p-4 border-l-8 border-l-primary rounded-lg dark:border-gray-700 my-5"
       >
-        <headerFrom />
-      </div>
-      <div v-for="Q in numOfQuestion" :key="Q">
-        <questionSurvey :form="Form" :numOfQuestion="numOfQuestion" />
+        <h1 class="text-xl font-bold my-5">All Froms</h1>
+
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table
+            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+          >
+            <thead
+              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <tr>
+                <th scope="col" class="px-6 py-3">Id</th>
+                <th scope="col" class="px-6 py-3">Form name</th>
+                <th scope="col" class="px-6 py-3">Created at</th>
+                <th scope="col" class="px-6 py-3">Ended at</th>
+                <th scope="col" class="px-6 py-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="Form in Forms"
+                :key="Form.id"
+                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
+              >
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {{ Form.id }}
+                </th>
+                <td class="px-6 py-4">{{ Form.title }}</td>
+                <td class="px-6 py-4">{{ Form.created_at }}</td>
+                <td class="px-6 py-4">$2999</td>
+                <td class="px-6 py-4">
+                  <router-link
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    :to="'/resForm/' + Form.id"
+                  >
+                    View
+                  </router-link>
+                </td>
+                <td class="px-6 py-4">
+                  <router-link
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    :to="'/answers/' + Form.id"
+                  >
+                    Responses
+                  </router-link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </layout>
@@ -53,32 +91,20 @@
 import headerFrom from "@/components/main/headerFrom.vue";
 import layout from "./layouts/layout.vue";
 import questionSurvey from "@/components/main/questionSurvey.vue";
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
-const numOfQuestion = ref(1);
 import Swal from "sweetalert2";
 
-const Form = ref({
-  title: "Untitled form",
-  description: "",
-  questions: [],
-});
+const Forms = ref([]);
 
-const onSave = () => {
-  console.log(Form.value);
-  axios
-    .post("http://localhost:3000/admin/form/store", {
-      form: Form.value,
-    })
-    .then(() => {
-      Swal.fire({
-        title: "Good job!",
-        text: "Form added successfully!",
-        icon: "success",
-      });
-    })
-    .catch((error) => {
-      console.log("error", error);
-    });
-};
+onMounted(async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/admin/getForms");
+    // Update Form with the retrieved data
+    Forms.value = response.data.forms;
+  } catch (error) {
+    console.error("Error:", error);
+    // Handle error
+  }
+});
 </script>
