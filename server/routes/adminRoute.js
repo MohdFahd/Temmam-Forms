@@ -56,8 +56,8 @@ router.post("/form/store", (req, res) => {
   formData.questions;
   // Insert form into the forms table
   db.query(
-    "INSERT INTO forms (title, description) VALUES (?, ?)",
-    [formData.title, formData.description],
+    "INSERT INTO forms (title, description,end_at) VALUES (?,?, ?)",
+    [formData.title, formData.description, formData.EndDate],
     (err, formResult) => {
       if (err) {
         console.error(err);

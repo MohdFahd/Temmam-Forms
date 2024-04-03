@@ -62,7 +62,7 @@
                 </th>
                 <td class="px-6 py-4">{{ Form.title }}</td>
                 <td class="px-6 py-4">{{ Form.created_at }}</td>
-                <td class="px-6 py-4">$2999</td>
+                <td class="px-6 py-4">{{ Form.end_at }}</td>
                 <td class="px-6 py-4">
                   <router-link
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"

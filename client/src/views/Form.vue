@@ -41,7 +41,28 @@
       <div
         class="p-4 border-l-8 border-l-primary rounded-lg dark:border-gray-700"
       >
-        <headerFrom />
+        <div>
+          <input
+            type="text"
+            class="w-full text-4xl text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
+            v-model="Form.title"
+          />
+          <input
+            type="text"
+            class="w-full text-primary border-b-2 focus:outline-none focus:border-b-2 p-2 focus:border-primary"
+            placeholder="Enter your Desertion..."
+            v-model="Form.description"
+          />
+        </div>
+        <div class="flex justify-end my-5">
+          <h1 class="mx-2 font-bold">End Date:</h1>
+          <el-date-picker
+            v-model="Form.EndDate"
+            type="datetime"
+            placeholder="Select date and time"
+          />
+        </div>
+        <!-- <headerFrom /> -->
       </div>
       <div v-for="Q in numOfQuestion" :key="Q">
         <questionSurvey :form="Form" :numOfQuestion="numOfQuestion" />
@@ -61,9 +82,10 @@ import Swal from "sweetalert2";
 const Form = ref({
   title: "Untitled form",
   description: "",
+  EndDate: "",
   questions: [],
 });
-
+// const EndDate = ref("");
 const onSave = () => {
   console.log(Form.value);
   axios
