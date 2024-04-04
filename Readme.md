@@ -9,6 +9,21 @@ Temmam Form is a simple form builder application built with Node.js and Vue.js. 
 - **Form Submission**: Collect responses from respondents who fill out the form.
 - **Data Storage**: Store form submissions securely for later retrieval and analysis.
 
+## Preview
+
+<div style="text-align: center;">
+    <img src="imgs/main.png" />
+    <br />
+    <br />
+    <img src="imgs/insertForm.png" />
+    <br />
+    <br />
+    <img src="imgs/Test.png" />
+    <br />
+    <br />
+    <img src="imgs/response.png" />
+
+</div>
 ## Installation
 
 To run the temmam Form application locally, follow these steps:

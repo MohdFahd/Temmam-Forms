@@ -130,7 +130,7 @@ router.post("/form/responseSubmission", (req, res) => {
   const { from_id } = formData;
   const data = formData.questions;
   const user_id = req.body.user_id;
-  console.log(user_id);
+  console.log("Form Data", formData, "User id", user_id);
 
   // Check if the from_id exists in the forms table
   db.query("SELECT id FROM forms WHERE id = ?", [from_id], (err, result) => {

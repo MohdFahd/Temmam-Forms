@@ -3,7 +3,7 @@
     <div
       class="p-4 border-l-8 border-l-primary rounded-lg dark:border-gray-700 my-5"
     >
-      <h1 class="text-3xl my-2">Contact information {{ formExpired }}</h1>
+      <h1 class="text-3xl my-2">Contact information</h1>
       <hr class="border-b border-gray-300 bg-black my-5" />
       <p class="text-lg text-gray-600">
         Name:
@@ -147,7 +147,7 @@ export default {
       axios
         .post("http://localhost:3000/admin/form/responseSubmission", {
           form: formData.value,
-          user_id: Data.value,
+          user_id: Data.value.id,
         })
         .then((response) => {
           // Handle the response from the server
