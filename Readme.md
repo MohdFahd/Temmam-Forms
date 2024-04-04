@@ -24,6 +24,7 @@ Temmam Form is a simple form builder application built with Node.js and Vue.js. 
     <img src="imgs/response.png" />
 
 </div>
+
 ## Installation
 
 To run the temmam Form application locally, follow these steps:
@@ -35,6 +36,13 @@ To run the temmam Form application locally, follow these steps:
    ```
 
 2. **import the db into the sqlite database**
+
+- To Login as Admin:
+  **Email**: admin@gmail.com
+  **Password**:123
+
+- **As User:**
+  take the url and replace it.
 
 3. **Navigate to the client directory**:
 
