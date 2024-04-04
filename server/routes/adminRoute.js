@@ -38,6 +38,7 @@ router.post("/login", (req, res) => {
                   const userData = {
                     name: data[0].name,
                     email: data[0].email,
+                    role: data[0].role,
                     token: token,
                   };
                   // Send userData object in response

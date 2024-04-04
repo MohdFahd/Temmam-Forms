@@ -134,7 +134,7 @@
                   />
                 </svg>
               </span>
-              Continue with X
+              Continue with X {{ id }}
             </a>
           </form>
         </div>
@@ -145,10 +145,11 @@
 <script setup>
 import axios from "axios";
 import { ref } from "vue";
-import { useRouter } from "vue-router"; // Import useRouter function
+import { useRouter, useRoute } from "vue-router"; // Import useRouter function
 const email = ref("");
 const password = ref("");
-const router = useRouter(); // Use useRouter to access the router instance
+const router = useRouter();
+
 const submit = () => {
   // Make a login request
   axios
@@ -165,10 +166,20 @@ const submit = () => {
         // localStorage.setItem("name", data.data[0].name);
         // console.log("name", data.data[0].name);
 
-        if (data.role === "admin") {
+        if (data.userData.role == "admin") {
           router.push({ name: "home" }); // Use router.push instead of this.$router.push
         } else {
-          router.push({ name: "resForm", params: { id: 50 } });
+          const urlParams = new URLSearchParams(window.location.search);
+
+          // Get the value of the 'redirect' parameter
+          const redirectParam = urlParams.get("redirect");
+
+          // Extract the last part of the URL path, which should be the ID
+          const lastId = redirectParam.substring(
+            redirectParam.lastIndexOf("/") + 1
+          );
+          console.log("lastId");
+          router.push({ name: "resForm", params: { id: lastId } });
         }
       }
     })
