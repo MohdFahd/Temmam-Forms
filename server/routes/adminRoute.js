@@ -39,6 +39,7 @@ router.post("/login", (req, res) => {
                     name: data[0].name,
                     email: data[0].email,
                     role: data[0].role,
+                    id: data[0].id,
                     token: token,
                   };
                   // Send userData object in response
@@ -128,8 +129,8 @@ router.post("/form/responseSubmission", (req, res) => {
   const formData = req.body.form;
   const { from_id } = formData;
   const data = formData.questions;
-  const user_id = 2;
-  console.log(from_id);
+  const user_id = req.body.user_id;
+  console.log(user_id);
 
   // Check if the from_id exists in the forms table
   db.query("SELECT id FROM forms WHERE id = ?", [from_id], (err, result) => {

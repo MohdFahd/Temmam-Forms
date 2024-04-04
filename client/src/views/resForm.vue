@@ -121,6 +121,7 @@ export default {
     },
   },
   setup() {
+    const Data = ref({});
     const $route = useRoute();
     const id = $route.params.id;
     const formData = ref({});
@@ -129,6 +130,7 @@ export default {
     const answers = ref({
       radio: "",
     });
+
     const isExpired = (end) => {
       const now = new Date();
 
@@ -145,6 +147,7 @@ export default {
       axios
         .post("http://localhost:3000/admin/form/responseSubmission", {
           form: formData.value,
+          user_id: Data.value,
         })
         .then((response) => {
           // Handle the response from the server
@@ -185,7 +188,7 @@ export default {
           // Handle error
         });
     });
-    const Data = ref({});
+
     const router = useRouter(); // Initialize Vue Router
     onMounted(() => {
       const storedData = localStorage.getItem("userData");

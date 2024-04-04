@@ -1,5 +1,5 @@
 <template>
-  <layout>
+  <layout v-if="Data && Data.role === 'admin'">
     <div class="p-4 sm:ml-64">
       <nav class="my-5 flex justify-end items-end">
         <router-link to="/form">
@@ -86,6 +86,9 @@
       </div>
     </div>
   </layout>
+  <div v-else>
+    <h1 class="text-3xl my-5 text-center">Thanks</h1>
+  </div>
 </template>
 <script setup>
 import headerFrom from "@/components/main/headerFrom.vue";
