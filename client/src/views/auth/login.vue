@@ -160,11 +160,16 @@ const submit = () => {
       if (data.login) {
         console.log(data);
         // Redirect to /admin/ on successful login
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.data[0].user_name);
-        localStorage.setItem("name", data.data[0].name);
-        console.log("name", data.data[0].name);
-        router.push({ name: "home" }); // Use router.push instead of this.$router.push
+        localStorage.setItem("userData", JSON.stringify(data.userData));
+        // localStorage.setItem("username", data.data[0].user_name);
+        // localStorage.setItem("name", data.data[0].name);
+        // console.log("name", data.data[0].name);
+
+        if (data.role === "admin") {
+          router.push({ name: "home" }); // Use router.push instead of this.$router.push
+        } else {
+          router.push({ name: "resForm", params: { id: 50 } });
+        }
       }
     })
     .catch((error) => {

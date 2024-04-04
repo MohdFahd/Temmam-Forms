@@ -35,7 +35,13 @@ router.post("/login", (req, res) => {
                     .status(500)
                     .json({ success: false, message: "token error" });
                 } else {
-                  return res.json({ login: true, token, data });
+                  const userData = {
+                    name: data[0].name,
+                    email: data[0].email,
+                    token: token,
+                  };
+                  // Send userData object in response
+                  return res.json({ login: true, userData });
                 }
               }
             );

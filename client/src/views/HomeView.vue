@@ -94,6 +94,7 @@ import questionSurvey from "@/components/main/questionSurvey.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRouter } from "vue-router"; // Import Vue Router
 
 const Forms = ref([]);
 
@@ -107,4 +108,35 @@ onMounted(async () => {
     // Handle error
   }
 });
+const Data = ref(null);
+const router = useRouter(); // Initialize Vue Router
+onMounted(() => {
+  const storedData = localStorage.getItem("userData");
+  console.log("Stored Data:", storedData); // Log the retrieved data
+  if (storedData) {
+    try {
+      Data.value = JSON.parse(storedData);
+    } catch (error) {
+      console.error("Error parsing stored data:", error);
+    }
+  } else {
+    // If no user data is stored, redirect to the login page
+    router.push("/login");
+  }
+});
+const loginUser = (email, password) => {
+  axios
+    .post("/login", { email, password })
+    .then((response) => {
+      const { token, data } = response.data;
+      localStorage.setItem("userData", JSON.stringify(data));
+      localStorage.setItem("token", token);
+      Data.value = data;
+      // After successful login, navigate to the desired page
+      router.push("/desired-page");
+    })
+    .catch((error) => {
+      console.error("Login error:", error);
+    });
+};
 </script>

@@ -3,11 +3,15 @@
     <div
       class="p-4 border-l-8 border-l-primary rounded-lg dark:border-gray-700 my-5"
     >
-      <h1 class="text-3xl my-2">Contact information</h1>
+      <h1 class="text-3xl my-2">Contact information {{ formExpired }}</h1>
       <hr class="border-b border-gray-300 bg-black my-5" />
       <p class="text-lg text-gray-600">
+        Name:
+        <span class="text-primary font-bold">{{ Data.name }}</span>
+      </p>
+      <p class="text-lg text-gray-600">
         Email:
-        <span class="text-primary font-bold">mmahmmad3878@gmail.com</span>
+        <span class="text-primary font-bold">{{ Data.email }}</span>
       </p>
     </div>
     <div
@@ -103,9 +107,9 @@
 </template>
 
 <script>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios, { toFormData } from "axios";
 import Swal from "sweetalert2";
 
 export default {
@@ -120,10 +124,22 @@ export default {
     const $route = useRoute();
     const id = $route.params.id;
     const formData = ref({});
+    const endDate = ref("");
+    var end = endDate.value;
     const answers = ref({
       radio: "",
     });
+    const isExpired = (end) => {
+      const now = new Date();
 
+      // Formatting dates into yyyy-mm-dd format
+      const nowFormatted = now.toISOString().split("T")[0];
+      // Comparing dates
+      const forEnd = typeof end; // Getting the type of the value
+      const forNow = typeof nowFormatted; // Getting the type of the value
+      return { end, forNow };
+    };
+    const formExpired = isExpired(end); // Check if form is expired
     const onSend = () => {
       console.log(formData.value);
       axios
@@ -156,6 +172,7 @@ export default {
         .then((response) => {
           // Update formData with the retrieved data
           formData.value = response.data.data;
+          endDate.value = formData.value.EndDate;
 
           // Iterate over each question in the formData
           formData.value.questions.forEach((question) => {
@@ -168,8 +185,38 @@ export default {
           // Handle error
         });
     });
-
-    return { onSend, formData, answers };
+    const Data = ref({});
+    const router = useRouter(); // Initialize Vue Router
+    onMounted(() => {
+      const storedData = localStorage.getItem("userData");
+      console.log("Stored Data:", storedData); // Log the retrieved data
+      if (storedData) {
+        try {
+          Data.value = JSON.parse(storedData);
+        } catch (error) {
+          console.error("Error parsing stored data:", error);
+        }
+      } else {
+        // If no user data is stored, redirect to the login page
+        router.push("/login");
+      }
+    });
+    const loginUser = (email, password) => {
+      axios
+        .post("/login", { email, password })
+        .then((response) => {
+          const { token, data } = response.data;
+          localStorage.setItem("userData", JSON.stringify(data));
+          localStorage.setItem("token", token);
+          Data.value = data;
+          // After successful login, navigate to the desired page
+          router.push("/desired-page");
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+        });
+    };
+    return { onSend, formData, endDate, formExpired, Data, loginUser };
   },
 };
 </script>
